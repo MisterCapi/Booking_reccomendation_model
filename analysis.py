@@ -7,6 +7,7 @@ from sklearn.preprocessing import LabelEncoder
 
 df = pd.read_csv('data/raw/train_set.csv')
 df2 = pd.read_csv('data/raw/test_set.csv')
+df_gt = pd.read_csv('data/raw/ground_truth.csv')
 
 df = pd.concat([df, df2], axis=0)
 
@@ -14,13 +15,14 @@ N_cities = df.nunique()['city_id']
 N_affiliate = df.nunique()['affiliate_id']
 
 """
+Column          N_unique
 user_id           259159 -> delete
-checkin              425 -> to cos and sin of dt.dayofweek and dt.day and dt.month
-checkout             425 -> to cos and sin of dt.dayofweek and dt.day and dt.month
-city_id            39902 -> label encode, because not all int values are used (many are skipped in fact)
-device_class           3 -> ['desktop' 'mobile' 'tablet'] -> easy to one-hot encode
-affiliate_id        3611 -> label encode
-booker_country         5 -> ['desktop' 'mobile' 'tablet'] -> easy to one-hot encode
+checkin              425 -> to cos and sin of dt.dayofweek and dt.day and dt.month (continuous feature)
+checkout             425 -> to cos and sin of dt.dayofweek and dt.day and dt.month (continuous feature)
+city_id            39902 -> label encode, because not all int values are used (many ids are skipped in fact)
+device_class           3 -> ['desktop' 'mobile' 'tablet'] -> easy to one-hot encode (categorical feature)
+affiliate_id        3611 -> label encode (categorical feature)
+booker_country         5 -> easy to one-hot encode (categorical feature)
 hotel_country        195 -> drop
 utrip_id          288348 -> just an identification id for each sample -> skip
 """

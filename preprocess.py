@@ -38,9 +38,17 @@ for data_path in ('data/raw/train_set.csv', 'data/raw/test_set.csv'):
         df = df[df['seq_len'] > 1]
         df.drop('seq_len', axis=1, inplace=True)
         df['destination'] = df['utrip_id'].map(df.groupby('utrip_id').aggregate('city_id').aggregate('last'))
+    else:
+        test_destinations = pd.read_csv('data/raw/ground_truth.csv')
+        df = df.merge(test_destinations[['utrip_id', 'city_id']], on='utrip_id', how='left')
+        df = df.rename({'city_id_y': 'destination', 'city_id_x': 'city_id'}, axis=1)
+        le = LabelEncoder()
+        le.classes_ = np.load(f'encoders/city_id_classes.npy', allow_pickle=True)
+        df['destination'] = le.transform(df['destination'].values)
 
     print(df.head().to_string())
     print(df.describe().to_string())
     print(df.dtypes)
     print('='*30)
+    os.makedirs('data/processed', exist_ok=True)
     df.to_csv(f'data/processed/{data_path.rsplit("/", 1)[-1]}', index=False)

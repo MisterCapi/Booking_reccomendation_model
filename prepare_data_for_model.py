@@ -13,14 +13,9 @@ for data_path in ('data/processed/train_set.csv', 'data/processed/test_set.csv')
     print(df.head(20).to_string())
 
     # Get X_cities for RNN
-    if data_path == 'data/processed/train_set.csv':
-        # Limit city sequences to 20
-        df = df.groupby('utrip_id').head(21).reset_index(drop=True)
-        X_cities = df.groupby('utrip_id').city_id.apply(lambda x: np.array(np.array(x)[:-1])).values
-    else:
-        # Limit city sequences to 20
-        df = df.groupby('utrip_id').head(20).reset_index(drop=True)
-        X_cities = df.groupby('utrip_id').city_id.apply(lambda x: np.array(np.array(x)[:])).values
+    # Limit city sequences to 20
+    df = df.groupby('utrip_id').head(21).reset_index(drop=True)
+    X_cities = df.groupby('utrip_id').city_id.apply(lambda x: np.array(np.array(x)[:-1])).values
 
     def get_dimensions(array, level=0):
         yield level, len(array)
@@ -51,9 +46,8 @@ for data_path in ('data/processed/train_set.csv', 'data/processed/test_set.csv')
         return result
 
     X_cities = pad(X_cities, N_cities)
-    if data_path == 'data/processed/train_set.csv':
-        y_cities = df.groupby('utrip_id')['city_id'].aggregate('last').values
-        print(y_cities.shape)
+    y_cities = df.groupby('utrip_id')['destination'].aggregate('first').values
+    print(y_cities.shape)
     print(X_cities.shape)
 
     print(df.describe().to_string())
@@ -92,5 +86,6 @@ for data_path in ('data/processed/train_set.csv', 'data/processed/test_set.csv')
         np.save('data/model_ready/X_train_features_categorical.npy', X_features_categorical)
     else:
         np.save('data/model_ready/X_test_cities.npy', X_cities)
+        np.save('data/model_ready/y_test_cities.npy', y_cities)
         np.save('data/model_ready/X_test_features_continuous.npy', X_features_continuous)
         np.save('data/model_ready/X_test_features_categorical.npy', X_features_categorical)
