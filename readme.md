@@ -41,6 +41,7 @@ I've tried implementing 3 models:
 As a main metric I used accuracy@4, which means the model is able to choose 4 cities and if one of them is correct that's a hit.
 
 Example:
+
 ![image](city_proposal_example.png)
 
 Each model was compared using 20k-fold validation, table below presents average validation acuuracy@4 and standard deviation of the results:
